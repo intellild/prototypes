@@ -1,0 +1,34 @@
+{
+  "root": "packages/di-macro",
+  "sourceRoot": "packages/di-macro/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:package",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/di-macro",
+        "tsConfig": "packages/di-macro/tsconfig.lib.json",
+        "packageJson": "packages/di-macro/package.json",
+        "main": "packages/di-macro/src/index.ts",
+        "assets": ["packages/di-macro/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/di-macro/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/di-macro"],
+      "options": {
+        "jestConfig": "packages/di-macro/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

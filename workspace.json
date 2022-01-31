@@ -1,4 +1,7 @@
 {
   "version": 2,
-  "projects": {}
+  "projects": {
+    "di-library": "packages/di-library",
+    "di-macro": "packages/di-macro"
+  }
 }
