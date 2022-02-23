@@ -18,7 +18,7 @@ function createFactory(tokens: TokenNode[], klassName: string) {
 
   return t.classMethod(
     'method',
-    t.identifier('factory'),
+    t.identifier('ɵfac'),
     [t.identifier('container'), t.identifier('context')],
     t.blockStatement([
       t.returnStatement(t.newExpression(t.identifier(klassName), args)),
@@ -46,6 +46,9 @@ export const injectable = createMacro(({ references }) => {
     if (!klass.node.id) {
       throw new Error();
     }
+    klass.node.decorators = klass.node.decorators?.filter(
+      (it) => it !== decorator.node
+    );
     klass.traverse({
       ClassMethod(method) {
         if (method.node.kind !== 'constructor') {

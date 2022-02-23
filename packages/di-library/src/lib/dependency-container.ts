@@ -355,7 +355,7 @@ class InternalDependencyContainer implements DependencyContainer {
   }
 
   private construct<T>(ctor: constructor<T>, context: ResolutionContext): T {
-    const factory = (ctor as any).factory;
+    const factory = (ctor as any).ɵfac;
     if (!factory) {
       throw new Error(`Injectable class should be decorated by injectable`);
     }
