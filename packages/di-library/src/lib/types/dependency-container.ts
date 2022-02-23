@@ -1,8 +1,10 @@
-import FactoryProvider from '../providers/factory-provider';
-import InjectionToken from '../providers/injection-token';
-import TokenProvider from '../providers/token-provider';
-import ValueProvider from '../providers/value-provider';
-import ClassProvider from '../providers/class-provider';
+import {
+  ClassProvider,
+  FactoryProvider,
+  InjectionToken,
+  TokenProvider,
+  ValueProvider,
+} from '../providers';
 import constructor from './constructor';
 import RegistrationOptions from './registration-options';
 
@@ -77,7 +79,6 @@ export default interface DependencyContainer {
    * @return An instance of the dependency
    */
   resolve<T>(token: InjectionToken<T>): T;
-  resolveAll<T>(token: InjectionToken<T>): T[];
 
   /**
    * Check if the given dependency is registered

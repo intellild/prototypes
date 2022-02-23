@@ -1,4 +1,3 @@
-import { formatErrorCtor } from './error-helpers';
 import {
   ClassProvider,
   FactoryProvider,
@@ -8,7 +7,6 @@ import {
   isFactoryProvider,
   isNormalToken,
   isProvider,
-  isTokenDescriptor,
   isTokenProvider,
   isValueProvider,
   Provider,
@@ -19,11 +17,7 @@ import {
 import Registry from './registry';
 import ResolutionContext from './resolution-context';
 import constructor from './types/constructor';
-import DependencyContainer, {
-  PostResolutionInterceptorCallback,
-  PreResolutionInterceptorCallback,
-  ResolutionType,
-} from './types/dependency-container';
+import DependencyContainer from './types/dependency-container';
 import Lifecycle from './types/lifecycle';
 import RegistrationOptions from './types/registration-options';
 
@@ -34,8 +28,6 @@ export type Registration<T = any> = {
 };
 
 export type ParamInfo = TokenDescriptor | InjectionToken<any>;
-
-export const typeInfo = new Map<constructor<any>, ParamInfo[]>();
 
 /** Dependency Container */
 class InternalDependencyContainer implements DependencyContainer {
@@ -216,6 +208,13 @@ class InternalDependencyContainer implements DependencyContainer {
       );
     }
 
+    if (context.workingToken.has(token)) {
+      throw new Error(
+        `Circular dependency detected for token: ${token.toString()}`
+      );
+    }
+    context.workingToken.add(token);
+
     if (registration) {
       return this.resolveRegistration(registration, context) as T;
     }
@@ -281,30 +280,6 @@ class InternalDependencyContainer implements DependencyContainer {
     }
 
     return resolved;
-  }
-
-  public resolveAll<T>(
-    token: InjectionToken<T>,
-    context: ResolutionContext = new ResolutionContext()
-  ): T[] {
-    const registrations = this.getAllRegistrations(token);
-
-    if (!registrations && isNormalToken(token)) {
-      throw new Error(
-        `Attempted to resolve unregistered dependency token: "${token.toString()}"`
-      );
-    }
-
-    if (registrations) {
-      const result = registrations.map((item) =>
-        this.resolveRegistration<T>(item, context)
-      );
-      return result;
-    }
-
-    // No registration for this token, but since it's a constructor, return an instance
-    const result = [this.construct(token as constructor<T>, context)];
-    return result as T[];
   }
 
   public isRegistered<T>(token: InjectionToken<T>, recursive = false): boolean {
@@ -379,48 +354,12 @@ class InternalDependencyContainer implements DependencyContainer {
     return null;
   }
 
-  private getAllRegistrations<T>(
-    token: InjectionToken<T>
-  ): Registration[] | null {
-    if (this.isRegistered(token)) {
-      return this._registry.getAll(token);
-    }
-
-    if (this.parent) {
-      return this.parent.getAllRegistrations(token);
-    }
-
-    return null;
-  }
-
   private construct<T>(ctor: constructor<T>, context: ResolutionContext): T {
-    const paramInfo = typeInfo.get(ctor);
-    if (!paramInfo || paramInfo.length === 0) {
-      if (ctor.length === 0) {
-        return new ctor();
-      } else {
-        throw new Error(`TypeInfo not known for "${ctor.name}"`);
-      }
+    const factory = (ctor as any).factory;
+    if (!factory) {
+      throw new Error(`Injectable class should be decorated by injectable`);
     }
-
-    const params = paramInfo.map(this.resolveParams(context, ctor));
-
-    return new ctor(...params);
-  }
-
-  private resolveParams<T>(context: ResolutionContext, ctor: constructor<T>) {
-    return (param: ParamInfo, idx: number) => {
-      try {
-        if (isTokenDescriptor(param)) {
-          return param.multiple
-            ? this.resolveAll(param.token)
-            : this.resolve(param.token, context);
-        }
-        return this.resolve(param, context);
-      } catch (e) {
-        throw new Error(formatErrorCtor(ctor, idx, e as Error));
-      }
-    };
+    return factory(this, context);
   }
 }
 
