@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`injectable-macro injectable-macro: injectable-macro 1`] = `
+
+import injectable from './lib.proxy.macro';
+
+@injectable()
+class B {}
+
+@injectable()
+class A {
+  constructor(b: B) {}
+}
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+class B {
+  static ɵfac(container, context) {
+    return new B();
+  }
+}
+
+class A {
+  constructor(b) {}
+
+  static ɵfac(container, context) {
+    return new A(container.resolve(B, context));
+  }
+}
+
+
+`;

@@ -70,21 +70,7 @@ function serializeTypeReferenceNode(
     return t.identifier('Object');
   }
 
-  /**
-   * We don't know if type is just a type (interface, etc.) or a concrete
-   * value (class, etc.).
-   * `typeof` operator allows us to use the expression even if it is not
-   * defined, fallback is just `Object`.
-   */
-  return t.conditionalExpression(
-    t.binaryExpression(
-      '===',
-      t.unaryExpression('typeof', reference),
-      t.stringLiteral('undefined')
-    ),
-    t.identifier('Object'),
-    t.cloneDeep(reference)
-  );
+  return t.cloneNode(reference);
 }
 
 /**
@@ -116,6 +102,7 @@ function serializeReference(
 
 type SerializedType =
   | t.Identifier
+  | t.MemberExpression
   | t.UnaryExpression
   | t.ConditionalExpression;
 

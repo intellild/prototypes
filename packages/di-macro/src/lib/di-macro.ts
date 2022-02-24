@@ -1,4 +1,4 @@
-import { createMacro } from 'babel-plugin-macros';
+import { createMacro, MacroHandler } from 'babel-plugin-macros';
 import * as t from '@babel/types';
 import { serializeType } from './serializeTypeReference';
 
@@ -12,7 +12,7 @@ function createFactory(tokens: TokenNode[], klassName: string) {
   const args = tokens.map((token) =>
     t.callExpression(
       t.memberExpression(t.identifier('container'), t.identifier('resolve')),
-      [token]
+      [token, t.identifier('context')]
     )
   );
 
@@ -28,7 +28,7 @@ function createFactory(tokens: TokenNode[], klassName: string) {
   );
 }
 
-export const injectable = createMacro(({ references }) => {
+const injectableMacro: MacroHandler = ({ references }) => {
   for (const reference of references.default) {
     const decorator = reference.findParent((parentPath) =>
       parentPath.isDecorator()
@@ -49,12 +49,12 @@ export const injectable = createMacro(({ references }) => {
     klass.node.decorators = klass.node.decorators?.filter(
       (it) => it !== decorator.node
     );
+    const tokens: TokenNode[] = [];
     klass.traverse({
       ClassMethod(method) {
         if (method.node.kind !== 'constructor') {
           return;
         }
-        const tokens: TokenNode[] = [];
         for (const param of method.node.params) {
           if (param.type === 'RestElement') {
             throw new Error();
@@ -86,8 +86,10 @@ export const injectable = createMacro(({ references }) => {
           const serialized = serializeType(klass, param);
           tokens.push(serialized);
         }
-        klass.node.body.body.push(createFactory(tokens, klass.node.id.name));
       },
     });
+    klass.node.body.body.push(createFactory(tokens, klass.node.id.name));
   }
-});
+};
+
+export = createMacro(injectableMacro);

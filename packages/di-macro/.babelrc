@@ -1,3 +1,13 @@
 {
-  "presets": [["@nrwl/web/babel", { "useBuiltIns": "usage" }]]
+  "presets": [
+    [
+      "@nrwl/web/babel",
+      {
+        "useBuiltIns": "usage",
+        "decorators": {
+          "legacy": true
+        }
+      }
+    ]
+  ]
 }

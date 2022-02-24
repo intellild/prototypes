@@ -208,19 +208,18 @@ class InternalDependencyContainer implements DependencyContainer {
       );
     }
 
-    if (context.workingToken.has(token)) {
-      throw new Error(
-        `Circular dependency detected for token: ${token.toString()}`
-      );
-    }
-    context.workingToken.add(token);
-
     if (registration) {
       return this.resolveRegistration(registration, context) as T;
     }
 
     // No registration for this token, but since it's a constructor, return an instance
     if (isConstructorToken(token)) {
+      // if (context.workingToken.has(token)) {
+      //   throw new Error(
+      //     `Circular dependency detected for token: ${token.toString()}`
+      //   );
+      // }
+      // context.workingToken.add(token);
       const result = this.construct(token, context);
       return result as T;
     }
