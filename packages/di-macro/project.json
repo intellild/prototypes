@@ -1,5 +1,5 @@
 {
-  "root": "packages/di-macro",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/di-macro/src",
   "projectType": "library",
   "targets": {
@@ -25,7 +25,7 @@
       "executor": "@nrwl/jest:jest",
       "outputs": ["coverage/packages/di-macro"],
       "options": {
-        "jestConfig": "packages/di-macro/jest.config.js",
+        "jestConfig": "packages/di-macro/jest.config.ts",
         "passWithNoTests": true
       }
     }

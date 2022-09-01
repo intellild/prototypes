@@ -3,5 +3,6 @@
   "projects": {
     "di-library": "packages/di-library",
     "di-macro": "packages/di-macro"
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }
