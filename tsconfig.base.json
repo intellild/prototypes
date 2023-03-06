@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@prototypes/ecs": ["packages/ecs/src/index.ts"],
       "di": ["packages/di-library/src/index.ts"],
       "di-macro": ["packages/di-macro/src/index.ts"]
     },
