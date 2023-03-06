@@ -1,4 +1,5 @@
 {
+  "name": "di-library",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/di-library/src",
   "projectType": "library",
@@ -22,7 +23,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/di-library"],
+      "outputs": ["{workspaceRoot}/coverage/packages/di-library"],
       "options": {
         "jestConfig": "packages/di-library/jest.config.ts",
         "passWithNoTests": true
